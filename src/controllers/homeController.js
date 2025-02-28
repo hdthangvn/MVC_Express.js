@@ -1,4 +1,3 @@
-
 let getHomePage = (req, res) => {
     return res.render('homepage.ejs');
 }
@@ -6,12 +5,16 @@ let getHomePage = (req, res) => {
 let getAboutPage = (req, res) => {
     return res.render('test/about.ejs');
 }
+let getContact = (req, res) => {
+    return res.render('test/contact.ejs');
+}
 
 // object: {
 //     key: '',
 //     value: ''
 // }
-module.exports = {
-    getHomePage: getHomePage,
-    getAboutPage: getAboutPage
-}
+export default {
+    getHomePage,
+    getAboutPage,
+    getContact
+};
