@@ -35,16 +35,18 @@ let handleUserLogin = (email, password) => {
                     }
                 } else {
                     userData.errCode = 2;
-                    userData.errMessage = `Your email isn't exist in the system. Please try another email.`;
+                    userData.errMessage = `User's not found.`;
                 }
 
-                resolve(userData);
+                
             } else {
                 // Nếu email không tồn tại
                 userData.errCode = 1;
                 userData.errMessage = `Your email isn't exist in the system. Please try another email.`;
-                resolve(userData);
+                
             }
+
+            resolve(userData);
         } catch (e) {
             reject(e);
         }
@@ -59,13 +61,43 @@ let checkUserEmail = (userEmail) => {
                 where: { email: userEmail }
             });
 
-            resolve(!!user); // Trả về true nếu user tồn tại, ngược lại false
+            if(user) {
+                resolve(true)
+            } else {
+                resolve(false)
+            } // Trả về true nếu user tồn tại, ngược lại false
         } catch (e) {
             reject(e);
         }
     });
 };
 
+let getAllUsers = (userId) => {
+    return new Promise(async (resolve, reject) => {
+        try{
+            let users = ''
+            if(userId === 'ALL'){
+                users = await db.User.findAll({
+                    attributes: {
+                        exclude: ['password']
+                    }
+                })
+            }
+            if(userId && userId !== 'ALL'){
+                users = await db.User.findOne({
+                    where: {id: userId},
+                    attributes: {
+                        exclude: ['password']
+                    }
+                })
+            }
+            resolve(users)
+        }catch(e) {
+            reject(e);
+        }
+    })
+}
+
 export default {
-    handleUserLogin
+    handleUserLogin, getAllUsers
 };
