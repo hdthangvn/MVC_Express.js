@@ -122,28 +122,29 @@ let createNewUser = (data) => {
             if (check === true) {
                 return resolve({
                     errCode: 1,
-                    message: 'Your email is already in use, please try another email.'
+                    errmessage: 'Your email is already in use, please try another email.'
                 });
+            } else {
+                let hashPasswordFromBcrypt = await hashUserPassword(data.password);
+                await db.User.create({
+                    email: data.email,
+                    password: hashPasswordFromBcrypt,
+                    firstName: data.firstName,
+                    lastName: data.lastName,
+                    address: data.address,
+                    phonenumber: data.phonenumber,
+                    gender: data.gender === '1' ? true : false,
+                    roleId: data.roleId
+                });
+
+                resolve({
+                    errCode: 0,
+                    message: 'OK'
+                });
+
             }
 
-            let hashPasswordFromBcrypt = await hashUserPassword(data.password);
-
-            await db.User.create({
-                email: data.email,
-                password: hashPasswordFromBcrypt,
-                firstName: data.firstName,
-                lastName: data.lastName,
-                address: data.address,
-                phonenumber: data.phonenumber,
-                gender: data.gender === '1' ? true : false,
-                roleId: data.roleId
-            });
-
-            resolve({
-                errCode: 0,
-                message: 'OK'
-            });
-
+            
         } catch (e) {
             console.error("❌ Lỗi tại createNewUser:", e);
             reject(e);
@@ -153,10 +154,10 @@ let createNewUser = (data) => {
 
 let deleteUser = (userId) => {
     return new Promise (async (resolve, reject) => {
-        let user = await db.User.findOne({ // lấy data từ db lên phía nodejs rồi mới dùng hàm này của Sequelize 
+        let foundUser = await db.User.findOne({ // lấy data từ db lên phía nodejs rồi mới dùng hàm này của Sequelize 
             where: { id: userId}           // khi chúng ta đã ép kiểu của raw : true(in config.json) thì Sequelize nó sẽ ko hiểu được
         })
-        if(!user){
+        if(!foundUser){
             resolve({
                 errCode: 2,
                 errMessage: `The user isn't exist`

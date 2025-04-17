@@ -75,7 +75,8 @@ let updateUserData = (data) => {
     return new Promise(async(resolve, reject) => {
         try {
             let user = await db.User.findOne({
-                where: { id: data.id }
+                where: { id: data.id },
+                raw: false // raw: true sẽ trả về plain object, raw: false trả về instance của model
             })
             if(user){
                 user.firstName = data.firstName;
@@ -99,7 +100,8 @@ let deleteUserById = (userId) => {
     return new Promise(async(resolve, reject) => {
         try {
             let user = await db.User.findOne({
-                where: {id: userId} // x <- y
+                where: {id: userId}, // x <- y
+                raw: false // raw: true sẽ trả về plain object, raw: false trả về instance của model
             })
 
             if(user) {
